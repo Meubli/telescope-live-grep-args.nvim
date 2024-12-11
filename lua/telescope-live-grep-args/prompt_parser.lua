@@ -92,7 +92,22 @@ M.parse = function(prompt, autoquote)
   autoquote = autoquote or autoquote == nil
   local first_char = string.sub(prompt, 1, 1)
   if autoquote and non_autoquote_chars[first_char] == nil then
-    return { prompt }
+    if string.find(prompt, "  ") then
+      local parts = {}
+      local pieces = vim.split(prompt, "  ")
+      if pieces[1] then
+        table.insert(parts, "-e")
+        table.insert(parts, pieces[1])
+      end
+
+      if pieces[2] then
+        table.insert(parts, "-g")
+        table.insert(parts, pieces[2])
+      end
+      return parts
+    else
+      return { prompt }
+    end
   end
 
   local str = {
